@@ -11,7 +11,13 @@ router.post("/register", async (req, res) => {
   const addedUser = await Users.add(user);
 
   try {
-    res.status(201).json(addedUser);
+    if (addedUser) {
+      if (!addedUser.username) {
+        res.status(401).json({ message: "please provide username" });
+      } else {
+        res.status(201).json(addedUser);
+      }
+    }
   } catch (error) {
     res.status(500).json(error);
   }
