@@ -16,24 +16,24 @@ describe("POST api/auth/register", () => {
     expect(database).toHaveLength(2);
   });
 
-  it("should be json", async () => {
+  it("should be truthy", async () => {
     await Users.add({ username: "test", password: "password123" });
 
     const user = await db("users").where({ id: 1 });
     expect(user).toBeTruthy();
   });
 
-  //  it("should return 201", async () => {
-  //     let user = {
-  //       username: "test",
-  //       password: "password123"
-  //     };
+  it("should return 201", () => {
+    let user = {
+      username: "test",
+      password: "password123"
+    };
 
-  //     let res = await request(server)
-  //       .post("/register")
-  //       .send(user);
-  //     expect(res.status).toBe(201);
-  //   });
+    request(server)
+      .post("/register")
+      .send(user)
+      .expect(201);
+  });
 });
 
 describe("POST api/auth/login", () => {
@@ -44,12 +44,26 @@ describe("POST api/auth/login", () => {
   it("should return status 200", async () => {
     await Users.add({ username: "test", password: "password123" });
     let user = {
-      username: "test"
+      username: "test",
+      password: "password123"
     };
 
-    const res = await request(server)
+    request(server)
       .post("/login")
-      .send(user);
-    console.log(res);
+      .send(user)
+      .expect(200);
+  });
+
+  it("shoiuld return 401", async () => {
+    await Users.add({ username: "test", password: "password123" });
+    let invUser = {
+      username: "test",
+      password: "123password"
+    };
+
+    request(server)
+      .post("/login")
+      .send(invUser)
+      .expect(401);
   });
 });
